@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sankat — Offline Emergency Kit</title>
+    <meta name="theme-color" content="#b71c1c">
+    <!-- Web App Manifest for Home Screen Installation -->
+    <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIlNhbmthdCBFbWVyZ2VuY3kgS2l0IiwKICAic2hvcnRfbmFtZSI6ICJTYW5rYXQiLAogICJkZXNjcmlwdGlvbiI6ICJPZmZsaW5lIGVtZXJnZW5jeSB0b29sa2l0LiIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjYjcxYzFjIiwKICAidGhlbWVfY29sb3IiOiAiI2I3MWMxYyIsCiAgIm9yaWVudGF0aW9uIjogInBvcnRyYWl0Igp9">
+    
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary: #d32f2f;
+            --primary-hover: #b71c1c;
+            --text-main: #ffffff;
+            --text-muted: #b0b0b0;
+            --border: #333333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+            padding-bottom: 60px;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 2px solid var(--primary);
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            color: var(--primary);
+            font-size: 2.2rem;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            text-transform: uppercase;
+        }
+
+        .alert-banner {
+            background-color: rgba(211, 47, 47, 0.15);
+            border: 1px solid var(--primary);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        .btn-main-call {
+            display: block;
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            text-align: center;
+            padding: 18px;
+            border-radius: 8px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            text-decoration: none;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 10px rgba(211, 47, 47, 0.3);
+            transition: background 0.2s;
+        }
+
+        .btn-main-call:active {
+            background-color: var(--primary-hover);
+        }
+
+        section {
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            border-left: 3px solid var(--primary);
+            padding-left: 8px;
+        }
+
+        .grid-numbers {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .num-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .num-card:active {
+            border-color: var(--primary);
+        }
+
+        .num-card .label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .num-card .phone {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .accordion {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .accordion-header::after {
+            content: '+';
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .accordion.active .accordion-header::after {
+            content: '−';
+        }
+
+        .accordion-content {
+            padding: 0 15px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out, padding 0.2s ease-out;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            border-top: 1px solid transparent;
+        }
+
+        .accordion.active .accordion-content {
+            padding: 15px;
+            max-height: 1000px;
+            border-top: 1px solid var(--border);
+        }
+
+        .accordion-content ol, .accordion-content ul {
+            padding-left: 20px;
+            margin-top: 8px;
+        }
+
+        .accordion-content li {
+            margin-bottom: 8px;
+        }
+
+        .warning-box {
+            background-color: rgba(255, 152, 0, 0.1);
+            border-left: 3px solid #ff9800;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #ff9800;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        input, textarea {
+            width: 100%;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 10px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn-save {
+            width: 100%;
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .btn-save:active {
+            background-color: #1b5e20;
+        }
+
+        footer {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-top: 4px;
+            padding: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>SANKAT</h1>
+        <div class="subtitle">Offline Emergency Kit</div>
+    </header>
+
+    <div class="alert-banner">
+        ⚠️ Works completely without internet.
+    </div>
+
+    <!-- Primary Universal Number -->
+    <a href="tel:112" class="btn-main-call">📞 CALL 112</a>
+
+    <!-- Emergency Helplines -->
+    <section>
+        <h2>Direct Emergency Lines</h2>
+        <div class="grid-numbers">
+            <a href="tel:100" class="num-card"><span class="label">Police</span><span class="phone">100</span></a>
+            <a href="tel:101" class="num-card"><span class="label">Fire & Rescue</span><span class="phone">101</span></a>
+            <a href="tel:102" class="num-card"><span class="label">Govt Ambulance</span><span class="phone">102</span></a>
+            <a href="tel:108" class="num-card"><span class="label">Disaster Response</span><span class="phone">108</span></a>
+        </div>
+    </section>
+
+    <section>
+        <h2>Disaster Control Rooms</h2>
+        <div class="grid-numbers">
+            <a href="tel:1078" class="num-card"><span class="label">NDMA Control Room</span><span class="phone">1078</span></a>
+            <a href="tel:1070" class="num-card"><span class="label">State Relief Line</span><span class="phone">1070</span></a>
+            <a href="tel:1077" class="num-card"><span class="label">District Control</span><span class="phone">1077</span></a>
+            <a href="tel:1073" class="num-card"><span class="label">Road Accident</span><span class="phone">1073</span></a>
+        </div>
+    </section>
+
+    <section>
+        <h2>Specific Help</h2>
+        <div class="grid-numbers">
+            <a href="tel:1091" class="num-card"><span class="label">Women in Distress</span><span class="phone">1091</span></a>
+            <a href="tel:1098" class="num-card"><span class="label">Childline Help</span><span class="phone">1098</span></a>
+            <a href="tel:1906" class="num-card"><span class="label">LPG Gas Leak</span><span class="phone">1906</span></a>
+            <a href="tel:1066" class="num-card"><span class="label">Poison Control</span><span class="phone">1066</span></a>
+            <a href="tel:139" class="num-card"><span class="label">Railway Helpline</span><span class="phone">139</span></a>
+            <a href="tel:1554" class="num-card"><span class="label">Coast Guard</span><span class="phone">1554</span></a>
+        </div>
+    </section>
+
+    <!-- First Aid Protocols -->
+    <section>
+        <h2>What to Say to Operator</h2>
+        <div class="accordion">
+            <div class="accordion-header">5 Things to Report (In Order)</div>
+            <div class="accordion-content">
+                <ol>
+                    <li><strong>Where you are:</strong> Street, landmark, floor, flat number. Give location first in case the call drops.</li>
+                    <li><strong>What happened:</strong> Explain in one short sentence.</li>
+                    <li><strong>Casualties:</strong> How many people are hurt, and how badly.</li>
